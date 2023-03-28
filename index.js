@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const cors = require('cors')
 const session = require("express-session");
 const loginRoute = require('./routes/auth/login');
 const logoutRoute = require('./routes/auth/logout');
@@ -7,9 +8,11 @@ const checkSessionRoute = require('./routes/auth/check-session');
 const path = require("path");
 // const ecgRoute = require('./routes/api/ecg');
 
+const PORT = process.env.PORT || 3000;
+
 const app = express()
 
-
+app.use(cors());
 app.use(express.json());
 
 if (process.env.NODE_ENV !== 'production') {
@@ -44,10 +47,25 @@ app.use('/auth', checkSessionRoute);
 ////////
 // app.use(express.static(path.join(__dirname, '/client/build/')));
 
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'ejs');
+app.use(express.static(__dirname + '/public'));
+
+
+app.get("/", (req, res) => {
+        res.render('home');
+    }
+);
+
+app.get("/course", (req, res) => {
+        res.render('course');
+    }
+);
+
 app.get("*", (req, res) => {
         res.status(404);
-        res.send()
+        res.send("nah")
     }
 )
-
-app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
+// app.listen(process.env.PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
