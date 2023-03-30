@@ -6,7 +6,45 @@ const loginRoute = require('./routes/auth/login');
 const logoutRoute = require('./routes/auth/logout');
 const checkSessionRoute = require('./routes/auth/check-session');
 const path = require("path");
-// const ecgRoute = require('./routes/api/ecg');
+const httpServer = require("http").createServer();
+const io = require("socket.io")(httpServer, {
+    cors: {
+        origin: "http://localhost:3000",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+    }
+});
+let connections = [];
+let drawingData = [];
+
+io.on("connection", (socket) => {
+    connections.push(socket);
+    console.log(`${socket.id} has connected`);
+
+    socket.on('draw', (data) => {
+        connections.forEach(con => {
+            if(con.id !== socket.id){
+                con.emit('ondraw', {x: data.x, y: data.y})
+            }
+        })
+    })
+
+    socket.on('down', (data) => {
+        connections.forEach(con => {
+            if (con.id !== socket.id){
+                con.emit('ondown', {x: data.x, y: data.y})
+            }
+        })
+    })
+
+    socket.on('disconnect', (reason)=>{
+        connections = connections.filter((con) => con.id !== socket.id);
+        console.log(`${socket.id} has connected`)
+    })
+});
+
+httpServer.listen(8080);
 
 const PORT = process.env.PORT || 3000;
 
@@ -53,7 +91,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get("/", (req, res) => {
-        res.render('home');
+        res.render('course');
     }
 );
 

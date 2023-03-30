@@ -79,9 +79,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/css/styles.css" />
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="/css/styles.css"/>
     <title>Interactive Whiteboard</title>
 </head>
 <body>
@@ -109,18 +109,18 @@
     >
         <h2>Login</h2>
         <label for="id">Student ID / Professor ID:</label>
-        <input type="text" name="id" id="id" required />
+        <input type="text" name="id" id="id" required/>
         <label for="password">Password:</label>
-        <input type="password" name="password" id="password" required />
+        <input type="password" name="password" id="password" required/>
         <div>
             <label for="student">Student</label>
-            <input type="radio" name="userType" id="student" value="student" />
+            <input type="radio" name="userType" id="student" value="student"/>
         </div>
         <div>
             <label for="professor">Professor</label>
-            <input type="radio" name="userType" id="professor" value="professor" />
+            <input type="radio" name="userType" id="professor" value="professor"/>
         </div>
-        <input type="submit" value="Login" />
+        <input type="submit" value="Login"/>
     </form>
 </nav>
 <script>
@@ -142,13 +142,13 @@
         const id = document.getElementById("id").value;
         const password = document.getElementById("password").value;
         const userType = document.querySelector('input[name="userType"]:checked').value;
-        console.log(JSON.stringify({ id, password, userType }));
+        console.log(JSON.stringify({id, password, userType}));
         fetch("/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ id, password, userType }),
+            body: JSON.stringify({id, password, userType}),
         })
             .then((response) => {
                 if (response.ok) {

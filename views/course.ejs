@@ -1,3 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
-<h1>baisdbiuasnduiasniud</h1>
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE-edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whiteboard</title>
+    <link rel="stylesheet" href="/css/whiteboard.css"/>
+</head>
+<body>
+<!--<canvas id="canvas"></canvas>-->
+<canvas id="canvas" class="whiteboard"></canvas>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
+<script>
+
+    let canvas = document.getElementById('canvas')
+    canvas.weight = 1000;
+    canvas.height = 700;
+    let socket = io.connect('http://localhost:8080/')
+
+    let ctx = canvas.getContext("2d");
+
+    let x;
+    let y;
+    let mouseDown = false;
+
+    window.onmousedown = (e) => {
+        ctx.moveTo(x, y);
+        socket.emit('down', {x,y})
+        mouseDown = true;
+    }
+    window.onmouseup = (e) => {
+        mouseDown = false;
+    }
+
+
+    socket.on('ondraw', ({x, y}) => {
+        ctx.lineTo(x, y);
+        ctx.stroke();
+    });
+
+    socket.on('ondown', ({x,y}) => {
+        ctx.moveTo(x, y);
+    })
+
+    window.onmousemove = (e) => {
+        x = e.clientX;
+        y = e.clientY;
+
+        // console.log({x,y})
+        if (mouseDown) {
+            socket.emit("draw", {x, y})
+            ctx.lineTo(x, y);
+            ctx.stroke();
+        }
+    }
+
+
+</script>
+</body>
+</html>
