@@ -14,19 +14,27 @@
 <script>
 
     let canvas = document.getElementById('canvas')
-    canvas.weight = 1000;
-    canvas.height = 700;
+    canvas.width = 2400;
+    canvas.height = 1350;
     let socket = io.connect('http://localhost:8080/')
 
     let ctx = canvas.getContext("2d");
-
+    //cursor shiftt!!!!!!!
+    const canvasOffset = canvas.getBoundingClientRect();
+    function adjustMouseCoordinates(e) {
+        return {
+            x: e.clientX - canvasOffset.left,
+            y: e.clientY - canvasOffset.top,
+        };
+    }
     let x;
     let y;
     let mouseDown = false;
 
     window.onmousedown = (e) => {
-        ctx.moveTo(x, y);
-        socket.emit('down', {x,y})
+        const adjustedCoords = adjustMouseCoordinates(e);
+        ctx.moveTo(adjustedCoords.x, adjustedCoords.y);
+        socket.emit('down', adjustedCoords)
         mouseDown = true;
     }
     window.onmouseup = (e) => {
@@ -43,14 +51,25 @@
         ctx.moveTo(x, y);
     })
 
+    socket.on('initialize', (drawingData) => {
+        drawingData.forEach(data => {
+            if (data.type === 'draw') {
+                ctx.lineTo(data.x, data.y);
+                ctx.stroke();
+            } else if (data.type === 'down') {
+                ctx.moveTo(data.x, data.y);
+            }
+        });
+    });
+
     window.onmousemove = (e) => {
         x = e.clientX;
         y = e.clientY;
-
+        const adjustedCoords = adjustMouseCoordinates(e);
         // console.log({x,y})
         if (mouseDown) {
-            socket.emit("draw", {x, y})
-            ctx.lineTo(x, y);
+            socket.emit("draw", adjustedCoords)
+            ctx.lineTo(adjustedCoords.x, adjustedCoords.y);
             ctx.stroke();
         }
     }

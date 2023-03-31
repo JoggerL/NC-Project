@@ -21,8 +21,10 @@ let drawingData = [];
 io.on("connection", (socket) => {
     connections.push(socket);
     console.log(`${socket.id} has connected`);
-
+    //added
+    socket.emit('initialize', drawingData);
     socket.on('draw', (data) => {
+        drawingData.push({ type: 'draw', x: data.x, y: data.y });
         connections.forEach(con => {
             if(con.id !== socket.id){
                 con.emit('ondraw', {x: data.x, y: data.y})
@@ -31,6 +33,7 @@ io.on("connection", (socket) => {
     })
 
     socket.on('down', (data) => {
+        drawingData.push({ type: 'down', x: data.x, y: data.y });
         connections.forEach(con => {
             if (con.id !== socket.id){
                 con.emit('ondown', {x: data.x, y: data.y})
@@ -91,7 +94,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get("/", (req, res) => {
-        res.render('course');
+        res.render('home');
     }
 );
 

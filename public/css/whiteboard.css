@@ -6,8 +6,8 @@ body {
 .whiteboard {
     display: block;
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 20px;
+    left: 20px;
     z-index: 1;
-    border: 1px solid #000;
+    border:5px groove black;
 }
