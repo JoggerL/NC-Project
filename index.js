@@ -23,12 +23,15 @@ let users = [];
 io.on("connection", (socket) => {
     connections.push(socket);
     console.log(`${socket.id} has connected`);
+
     const user = {
         id: socket.id,
         username: socket.handshake.query.username, // Get the username from the query
+        remainingTime: 0, // Add a field to store the remaining time
     };
+
     users.push(user); // Push the user object instead of socket
-    socket.emit("userList", users.map((user) => user.username)); // Emit the updated userList to all connected clients
+    socket.emit("userList", users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime }))); // Emit the updated userList to all connected clients
     //added
     socket.emit('initialize', drawingData);
     socket.on('draw', (data) => {
@@ -56,9 +59,23 @@ io.on("connection", (socket) => {
     socket.on('user_joined', (userData) => {
         userConn.push(userData);
         socket.userData = userData; // Store the user data in the socket for easy access
-
+        const userIndex = users.findIndex((u) => u.id === socket.id);
+        if (userIndex !== -1) {
+            users[userIndex].username = userData.username;
+            users[userIndex].password = userData.password;
+            users[userIndex].userType = userData.userType;
+        }
         // Emit the current list of users to all connected clients
-        io.emit('userList', userConn.map((user) => user.id)); // Emit the updated userList to all connected clients
+        // io.emit('userList', userConn.map((user) => user.id)); // Emit the updated userList to all connected clients
+        io.emit('userList', users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime }))); // Emit the updated userList to all connected clients
+    });
+
+    socket.on("start_timer", (time) => {
+        const userIndex = users.findIndex((u) => u.id === socket.id);
+        if (userIndex !== -1) {
+            users[userIndex].remainingTime = time;
+            io.emit("userList", users.map((user) => ({ username: user.username, remainingTime: user.remainingTime })));
+        }
     });
 
 });

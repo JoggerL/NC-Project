@@ -1,81 +1,3 @@
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <title>Interactive Whiteboard</title>-->
-<!--    <link rel="stylesheet" href="/css/styles.css">-->
-<!--</head>-->
-<!--<body>-->
-<!--<header>-->
-<!--    <h1>Interactive Whiteboard</h1>-->
-<!--</header>-->
-<!--<main>-->
-<!--    <section class="intro">-->
-<!--        <h2>Welcome to the Interactive Whiteboard!</h2>-->
-<!--        <p>-->
-<!--            This application allows users to draw, write, and collaborate on a shared virtual whiteboard.-->
-<!--            Create and join rooms to collaborate with friends, colleagues, or classmates in real-time.-->
-<!--        </p>-->
-<!--    </section>-->
-<!--    <section class="features">-->
-<!--        <h2>Features:</h2>-->
-<!--        <ul>-->
-<!--            <li>Real-time collaboration</li>-->
-<!--            <li>Various drawing tools and colors</li>-->
-<!--            <li>Undo and redo actions</li>-->
-<!--            <li>Save and export whiteboard</li>-->
-<!--        </ul>-->
-<!--    </section>-->
-<!--</main>-->
-<!--</body>-->
-<!--</html>-->
-<!--//////////////////////////////////SECOND-->
-<!--<!DOCTYPE html>-->
-<!--<html lang="en">-->
-<!--<head>-->
-<!--    <meta charset="UTF-8">-->
-<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
-<!--    <link rel="stylesheet" href="/css/styles.css">-->
-<!--    <title>Interactive Whiteboard</title>-->
-<!--</head>-->
-<!--<body>-->
-<!--<header>-->
-<!--    <button class="login-btn" id="loginBtn">Login</button>-->
-<!--</header>-->
-<!--<main>-->
-<!--    <section class="intro">-->
-<!--        <h1>Welcome to the Interactive Whiteboard!</h1>-->
-<!--        <p>This application offers an intuitive and user-friendly platform for users to collaborate and create digital whiteboards in real-time. Share your ideas, brainstorm, sketch, and communicate with your team seamlessly. Sign in to start using the Interactive Whiteboard now!</p>-->
-<!--    </section>-->
-<!--</main>-->
-<!--<nav class="login-nav" id="loginNav">-->
-<!--    <button class="close-btn" id="closeBtn">&times;</button>-->
-<!--    <form class="login-form" action="/login" method="post">-->
-<!--        <h2>Login</h2>-->
-<!--        <label for="id">Student ID / Professor ID:</label>-->
-<!--        <input type="text" name="id" id="id" required>-->
-<!--        <label for="password">Password:</label>-->
-<!--        <input type="password" name="password" id="password" required>-->
-<!--        <input type="submit" value="Login">-->
-<!--    </form>-->
-<!--</nav>-->
-<!--<script>-->
-<!--    const loginBtn = document.getElementById("loginBtn");-->
-<!--    const closeBtn = document.getElementById("closeBtn");-->
-<!--    const loginNav = document.getElementById("loginNav");-->
-
-<!--    loginBtn.addEventListener("click", () => {-->
-<!--        loginNav.classList.toggle("visible");-->
-<!--    });-->
-
-<!--    closeBtn.addEventListener("click", () => {-->
-<!--        loginNav.classList.remove("visible");-->
-<!--    });-->
-<!--</script>-->
-<!--</body>-->
-<!--</html>-->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -114,8 +36,8 @@
             id="loginForm"
     >
         <h2>Login</h2>
-        <label for="id">Student ID / Professor ID:</label>
-        <input type="text" name="id" id="id" required/>
+        <label for="username">Student ID / Professor ID:</label>
+        <input type="text" name="username" id="username" required/>
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" required/>
         <div>
@@ -141,8 +63,8 @@
     drawingBtn.addEventListener("click", () => {
         // window.location.href = '/course';
         if (listUser) {
-            const { id, password, userType } = listUser;
-            window.location.href = `/course?id=${id}&password=${password}&userType=${userType}`;
+            const { username, password, userType } = listUser;
+            window.location.href = `/course?username=${username}&password=${password}&userType=${userType}`;
         } else {
             alert('Please log in first.');
         }
@@ -189,23 +111,23 @@
 
     loginForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        const id = document.getElementById("id").value;
+        const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
         const userType = document.querySelector('input[name="userType"]:checked').value;
-        console.log(JSON.stringify({id, password, userType}));
+        console.log(JSON.stringify({username, password, userType}));
         fetch("/auth/login", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({id, password, userType}),
+            body: JSON.stringify({username, password, userType}),
         })
             .then((response) => {
                 if (response.ok) {
                     // location.reload();
                     updateUIAfterLogin();
                     listUser = {
-                        id: id,
+                        username: username,
                         password: password,
                         userType: userType,
                     };

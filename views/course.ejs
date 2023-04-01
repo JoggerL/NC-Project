@@ -8,11 +8,13 @@
     <link rel="stylesheet" href="/css/whiteboard.css"/>
 </head>
 <body>
-<!--<canvas id="canvas"></canvas>-->
 <canvas id="canvas" class="whiteboard"></canvas>
-<!--<div id="user-list"></div>-->
 <div id="user-list">
     <ul></ul>
+</div>
+<div id="timer-controls">
+    <input id="timer-input" type="number" min="1" placeholder="Enter time in seconds">
+    <button class = "startBtn" onclick="startTimer(document.getElementById('timer-input').value)">Start Timer</button>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 <script>
@@ -33,7 +35,9 @@
     canvas.height = 900;
     let socket = io.connect('http://localhost:8080/')
     socket.on("connect", () => {
-        socket.emit("user_joined", { id, password, userType });
+        const queryParams = getQueryParams();
+        const { username, password, userType } = queryParams;
+        socket.emit("user_joined", { username, password, userType });
     });
 
 
@@ -94,22 +98,28 @@
 
     //added for listing users joined
     const queryParams = getQueryParams();
-    const { id, password, userType } = queryParams;
+    const { username, password, userType } = queryParams;
 
     const userListElement = document.getElementById("user-list");
-
-    // socket.on("userList", (userList) => {
-    //     userListElement.innerHTML = userList
-    //         .map((id) => `<li>${id}</li>`)
-    //         .join("");
-    // });
 
     socket.on("userList", (userList) => {
         const userListElement = document.querySelector("#user-list ul");
         userListElement.innerHTML = userList
-            .map((id) => `<li>${id}</li>`)
+            .map((user) => `<li class="${user.remainingTime <= 0 ? 'time-up' : ''}">${user.username} - ${user.remainingTime}s</li>`)
             .join("");
     });
+
+    function startTimer(time) {
+        socket.emit("start_timer", time);
+        const timerId = setInterval(() => {
+            time -= 1;
+            if (time <= 0) {
+                clearInterval(timerId);
+                time = 0;
+            }
+            socket.emit("start_timer", time);
+        }, 1000);
+    }
 
 </script>
 </body>
