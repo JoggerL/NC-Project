@@ -136,9 +136,16 @@
     const loginForm = document.getElementById("loginForm");
     const drawingBtn = document.getElementById("drawingBtn");
     const logoutBtn = document.getElementById("logoutBtn");
+    let listUser = null;
 
     drawingBtn.addEventListener("click", () => {
-        window.location.href = '/course';
+        // window.location.href = '/course';
+        if (listUser) {
+            const { id, password, userType } = listUser;
+            window.location.href = `/course?id=${id}&password=${password}&userType=${userType}`;
+        } else {
+            alert('Please log in first.');
+        }
     });
 
     loginBtn.addEventListener("click", () => {
@@ -197,6 +204,11 @@
                 if (response.ok) {
                     // location.reload();
                     updateUIAfterLogin();
+                    listUser = {
+                        id: id,
+                        password: password,
+                        userType: userType,
+                    };
                     // window.location.href = '/course';
                 } else {
                     throw new Error("Login failed");

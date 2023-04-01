@@ -10,13 +10,32 @@
 <body>
 <!--<canvas id="canvas"></canvas>-->
 <canvas id="canvas" class="whiteboard"></canvas>
+<!--<div id="user-list"></div>-->
+<div id="user-list">
+    <ul></ul>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 <script>
+    function getQueryParams() {
+        const queryString = window.location.search.substring(1);
+        const params = queryString.split("&");
+        const result = {};
 
+        for (const param of params) {
+            const [key, value] = param.split("=");
+            result[key] = decodeURIComponent(value);
+        }
+
+        return result;
+    }
     let canvas = document.getElementById('canvas')
-    canvas.width = 2400;
-    canvas.height = 1350;
+    canvas.width = 1600;
+    canvas.height = 900;
     let socket = io.connect('http://localhost:8080/')
+    socket.on("connect", () => {
+        socket.emit("user_joined", { id, password, userType });
+    });
+
 
     let ctx = canvas.getContext("2d");
     //cursor shiftt!!!!!!!
@@ -40,7 +59,6 @@
     window.onmouseup = (e) => {
         mouseDown = false;
     }
-
 
     socket.on('ondraw', ({x, y}) => {
         ctx.lineTo(x, y);
@@ -74,6 +92,24 @@
         }
     }
 
+    //added for listing users joined
+    const queryParams = getQueryParams();
+    const { id, password, userType } = queryParams;
+
+    const userListElement = document.getElementById("user-list");
+
+    // socket.on("userList", (userList) => {
+    //     userListElement.innerHTML = userList
+    //         .map((id) => `<li>${id}</li>`)
+    //         .join("");
+    // });
+
+    socket.on("userList", (userList) => {
+        const userListElement = document.querySelector("#user-list ul");
+        userListElement.innerHTML = userList
+            .map((id) => `<li>${id}</li>`)
+            .join("");
+    });
 
 </script>
 </body>

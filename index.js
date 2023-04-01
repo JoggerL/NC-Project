@@ -16,11 +16,19 @@ const io = require("socket.io")(httpServer, {
     }
 });
 let connections = [];
+let userConn = [];
 let drawingData = [];
+let users = [];
 
 io.on("connection", (socket) => {
     connections.push(socket);
     console.log(`${socket.id} has connected`);
+    const user = {
+        id: socket.id,
+        username: socket.handshake.query.username, // Get the username from the query
+    };
+    users.push(user); // Push the user object instead of socket
+    socket.emit("userList", users.map((user) => user.username)); // Emit the updated userList to all connected clients
     //added
     socket.emit('initialize', drawingData);
     socket.on('draw', (data) => {
@@ -30,7 +38,7 @@ io.on("connection", (socket) => {
                 con.emit('ondraw', {x: data.x, y: data.y})
             }
         })
-    })
+    });
 
     socket.on('down', (data) => {
         drawingData.push({ type: 'down', x: data.x, y: data.y });
@@ -39,12 +47,20 @@ io.on("connection", (socket) => {
                 con.emit('ondown', {x: data.x, y: data.y})
             }
         })
-    })
+    });
 
     socket.on('disconnect', (reason)=>{
         connections = connections.filter((con) => con.id !== socket.id);
         console.log(`${socket.id} has connected`)
-    })
+    });
+    socket.on('user_joined', (userData) => {
+        userConn.push(userData);
+        socket.userData = userData; // Store the user data in the socket for easy access
+
+        // Emit the current list of users to all connected clients
+        io.emit('userList', userConn.map((user) => user.id)); // Emit the updated userList to all connected clients
+    });
+
 });
 
 httpServer.listen(8080);

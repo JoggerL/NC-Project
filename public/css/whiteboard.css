@@ -11,3 +11,34 @@ body {
     z-index: 1;
     border:5px groove black;
 }
+
+#user-list {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 2;
+    width: 200px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    color: #333;
+    overflow-y: auto;
+    max-height: calc(100% - 40px);
+}
+
+#user-list ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+#user-list li {
+    padding: 5px;
+    margin: 5px 0;
+    background-color: rgba(240, 240, 240, 0.9);
+    border-radius: 3px;
+}
