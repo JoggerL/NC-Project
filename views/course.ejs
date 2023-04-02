@@ -20,91 +20,24 @@
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 <script>
-    function getQueryParams() {
-        const queryString = window.location.search.substring(1);
-        const params = queryString.split("&");
-        const result = {};
-
-        for (const param of params) {
-            const [key, value] = param.split("=");
-            result[key] = decodeURIComponent(value);
-        }
-
-        return result;
-    }
     let canvas = document.getElementById('canvas')
     canvas.width = 1600;
     canvas.height = 900;
     let currentColor = "#000000";
     let lastX, lastY;
+    let drawingStarted;
     let socket = io.connect('http://localhost:8080/')
-    socket.on("connect", () => {
-        const queryParams = getQueryParams();
-        const { username, password, userType } = queryParams;
-        socket.emit("user_joined", { username, password, userType });
-    });
-
-
+    let lastPathId;
     let ctx = canvas.getContext("2d");
     //cursor shiftt!!!!!!!
     const canvasOffset = canvas.getBoundingClientRect();
-    function adjustMouseCoordinates(e) {
-        return {
-            x: e.clientX - canvasOffset.left,
-            y: e.clientY - canvasOffset.top,
-        };
-    }
     let x;
     let y;
     let mouseDown = false;
+    const queryParams = getQueryParams();
+    const userListElement = document.getElementById("user-list");
+    let currentPath = null;
 
-    canvas.onmousedown = (e) => {
-        const adjustedCoords = adjustMouseCoordinates(e);
-        lastX = adjustedCoords.x; // Add this line
-        lastY = adjustedCoords.y; // Add this line
-        ctx.moveTo(adjustedCoords.x, adjustedCoords.y);
-        socket.emit('down', { ...adjustedCoords, color: currentColor });
-        mouseDown = true;
-    };
-    canvas.onmouseup = (e) => {
-        mouseDown = false;
-    }
-
-    socket.on('ondraw', ({ x, y, color }) => {
-        ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.moveTo(lastX, lastY);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.closePath();
-        lastX = x;
-        lastY = y;
-    });
-    socket.on("segmentStart", () => {
-        ctx.closePath();
-        ctx.beginPath();
-    });
-
-    socket.on('ondown', ({ x, y, color }) => {
-        ctx.strokeStyle = color;
-        ctx.moveTo(x, y);
-    });
-
-    socket.on("initialize", (drawingDataSegments) => {
-        drawingDataSegments.forEach((segment) => {
-            ctx.beginPath();
-            segment.forEach((data, index) => {
-                ctx.strokeStyle = data.color;
-                if (data.type === "draw") {
-                    ctx.lineTo(data.x, data.y);
-                    ctx.stroke();
-                } else if (data.type === "down") {
-                    ctx.moveTo(data.x, data.y);
-                }
-            });
-            ctx.closePath();
-        });
-    });
 
     canvas.onmousemove = (e) => {
         x = e.clientX;
@@ -123,12 +56,68 @@
         }
     };
 
-    //added for listing users joined
-    const queryParams = getQueryParams();
+    canvas.onmousedown = (e) => {
+        const adjustedCoords = adjustMouseCoordinates(e);
+
+        lastX = adjustedCoords.x; // Add this line
+        lastY = adjustedCoords.y; // Add this line
+        ctx.moveTo(adjustedCoords.x, adjustedCoords.y);
+        socket.emit('down', { ...adjustedCoords, color: currentColor });
+        mouseDown = true;
+    };
+
+    canvas.onmouseup = (e) => {
+        mouseDown = false;
+    }
+
+    socket.on("connect", () => {
+        const queryParams = getQueryParams();
+        const { username, password, userType } = queryParams;
+        socket.emit("user_joined", { username, password, userType });
+    });
+
     const { username, password, userType } = queryParams;
 
-    const userListElement = document.getElementById("user-list");
+    socket.on('ondraw', ({ x, y, color }) => {
+        // ctx.beginPath();
+        ctx.strokeStyle = color;
+        // ctx.moveTo(lastX, lastY);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        // ctx.closePath();
+        // lastX = x;
+        // lastY = y;
+    });
 
+    socket.on("segmentStart", () => {
+        ctx.closePath();
+        ctx.beginPath();
+    });
+
+    socket.on('ondown', ({ x, y, color }) =>    {
+        ctx.strokeStyle = color;
+
+        //Sunday, try to fix!!!!!!!!!!!!!!!!!!!!!!!!!
+        ctx.moveTo(x, y);
+    });
+
+    // socket.on("initialize", (drawingDataSegments) => {
+    //     drawingDataSegments.forEach((segment) => {
+    //         ctx.beginPath();
+    //         segment.forEach((data, index) => {
+    //             ctx.strokeStyle = data.color;
+    //             if (data.type === "draw") {
+    //                 ctx.lineTo(data.x, data.y);
+    //                 ctx.stroke();
+    //             } else if (data.type === "down") {
+    //                 ctx.moveTo(data.x, data.y);
+    //             }
+    //         });
+    //         ctx.closePath();
+    //     });
+    // });
+
+    //added for listing users joined
     socket.on("userList", (userList) => {
         const userListElement = document.querySelector("#user-list ul");
         userListElement.innerHTML = userList
@@ -149,6 +138,24 @@
     }
     function changeColor(newColor) {
         currentColor = newColor;
+    }
+    function adjustMouseCoordinates(e) {
+        return {
+            x: e.clientX - canvasOffset.left,
+            y: e.clientY - canvasOffset.top,
+        };
+    }
+    function getQueryParams() {
+        const queryString = window.location.search.substring(1);
+        const params = queryString.split("&");
+        const result = {};
+
+        for (const param of params) {
+            const [key, value] = param.split("=");
+            result[key] = decodeURIComponent(value);
+        }
+
+        return result;
     }
 
 </script>

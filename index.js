@@ -45,6 +45,7 @@ io.on("connection", (socket) => {
         });
         socket.emit("initialize", drawingDataSegments);
     });
+
     socket.on('draw', (data) => {
         drawingData.push({ type: 'draw', x: data.x, y: data.y, color: data.color, pathId: socket.id });
         connections.forEach(con => {
@@ -53,16 +54,19 @@ io.on("connection", (socket) => {
             }
         })
     });
+
     socket.on("segmentStart", () => {
         drawingData.push({ type: "segmentStart" });
         socket.broadcast.emit("segmentStart");
     });
 
     socket.on('down', (data) => {
-        drawingData.push({ type: 'down', x: data.x, y: data.y, color: data.color, pathId: socket.id });
+        // drawingData.push({ type: 'down', x: data.x, y: data.y, color: data.color, pathId: socket.id });
+        drawingData.push({ x: data.x, y: data.y, color: data.color});
         connections.forEach(con => {
             if (con.id !== socket.id) {
-                con.emit('ondown', { x: data.x, y: data.y, color: data.color, pathId: socket.id })
+                con.emit('ondown', { x: data.x, y: data.y, color: data.color})
+                // con.emit('ondown', { x: data.x, y: data.y, color: data.color})
             }
         })
     });
@@ -71,6 +75,7 @@ io.on("connection", (socket) => {
         connections = connections.filter((con) => con.id !== socket.id);
         console.log(`${socket.id} has connected`)
     });
+
     socket.on('user_joined', (userData) => {
         userConn.push(userData);
         socket.userData = userData; // Store the user data in the socket for easy access
