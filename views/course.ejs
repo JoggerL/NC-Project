@@ -15,6 +15,8 @@
 <div id="timer-controls">
     <input id="timer-input" type="number" min="1" placeholder="Enter time in seconds">
     <button class = "startBtn" onclick="startTimer(document.getElementById('timer-input').value)">Start Timer</button>
+    <input id="color-input" type="color" value="#000000">
+    <button onclick="changeColor(document.getElementById('color-input').value)">Change Color</button>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 <script>
@@ -33,6 +35,7 @@
     let canvas = document.getElementById('canvas')
     canvas.width = 1600;
     canvas.height = 900;
+    let currentColor = "#000000";
     let socket = io.connect('http://localhost:8080/')
     socket.on("connect", () => {
         const queryParams = getQueryParams();
@@ -54,27 +57,37 @@
     let y;
     let mouseDown = false;
 
-    window.onmousedown = (e) => {
+    canvas.onmousedown = (e) => {
         const adjustedCoords = adjustMouseCoordinates(e);
         ctx.moveTo(adjustedCoords.x, adjustedCoords.y);
-        socket.emit('down', adjustedCoords)
+        socket.emit('down', { ...adjustedCoords, color: currentColor });
         mouseDown = true;
     }
-    window.onmouseup = (e) => {
+    canvas.onmouseup = (e) => {
         mouseDown = false;
     }
 
-    socket.on('ondraw', ({x, y}) => {
+    socket.on('ondraw', ({ x, y, color }) => {
+        ctx.strokeStyle = color;
         ctx.lineTo(x, y);
         ctx.stroke();
     });
 
-    socket.on('ondown', ({x,y}) => {
+
+    socket.on('ondown', ({ x, y, color }) => {
+        ctx.strokeStyle = color;
         ctx.moveTo(x, y);
-    })
+    });
 
     socket.on('initialize', (drawingData) => {
+        let lastColor = null;
         drawingData.forEach(data => {
+            if (lastColor !== data.color) {
+                ctx.beginPath();
+                ctx.strokeStyle = data.color;
+                lastColor = data.color;
+            }
+
             if (data.type === 'draw') {
                 ctx.lineTo(data.x, data.y);
                 ctx.stroke();
@@ -84,13 +97,14 @@
         });
     });
 
-    window.onmousemove = (e) => {
+    canvas.onmousemove = (e) => {
         x = e.clientX;
         y = e.clientY;
         const adjustedCoords = adjustMouseCoordinates(e);
         // console.log({x,y})
         if (mouseDown) {
-            socket.emit("draw", adjustedCoords)
+            socket.emit("draw", { ...adjustedCoords, color: currentColor });
+            ctx.strokeStyle = currentColor; // Add this line
             ctx.lineTo(adjustedCoords.x, adjustedCoords.y);
             ctx.stroke();
         }
@@ -119,6 +133,9 @@
             }
             socket.emit("start_timer", time);
         }, 1000);
+    }
+    function changeColor(newColor) {
+        currentColor = newColor;
     }
 
 </script>

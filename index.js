@@ -35,19 +35,19 @@ io.on("connection", (socket) => {
     //added
     socket.emit('initialize', drawingData);
     socket.on('draw', (data) => {
-        drawingData.push({ type: 'draw', x: data.x, y: data.y });
+        drawingData.push({ type: 'draw', x: data.x, y: data.y, color: data.color, pathId: socket.id });
         connections.forEach(con => {
-            if(con.id !== socket.id){
-                con.emit('ondraw', {x: data.x, y: data.y})
+            if (con.id !== socket.id) {
+                con.emit('ondraw', { x: data.x, y: data.y, color: data.color, pathId: socket.id })
             }
         })
     });
 
     socket.on('down', (data) => {
-        drawingData.push({ type: 'down', x: data.x, y: data.y });
+        drawingData.push({ type: 'down', x: data.x, y: data.y, color: data.color, pathId: socket.id });
         connections.forEach(con => {
-            if (con.id !== socket.id){
-                con.emit('ondown', {x: data.x, y: data.y})
+            if (con.id !== socket.id) {
+                con.emit('ondown', { x: data.x, y: data.y, color: data.color, pathId: socket.id })
             }
         })
     });
