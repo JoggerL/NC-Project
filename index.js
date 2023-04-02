@@ -100,6 +100,14 @@ io.on("connection", (socket) => {
         }
     });
 
+    socket.on("erase", (data) => {
+        connections.forEach((con) => {
+            if (con.id !== socket.id) {
+                con.emit("onerase", { x: data.x, y: data.y, size: data.size });
+            }
+        });
+    });
+
 });
 
 

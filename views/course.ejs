@@ -17,6 +17,11 @@
     <button class = "startBtn" onclick="startTimer(document.getElementById('timer-input').value)">Start Timer</button>
     <input id="color-input" type="color" value="#000000">
     <button onclick="changeColor(document.getElementById('color-input').value)">Change Color</button>
+    <button id="eraser-btn">Eraser</button>
+    <div id="eraser-slider-container" style="display: none;">
+        <input id="eraser-slider" type="range" min="1" max="50" value="10">
+        <span id="eraser-size">10</span>
+    </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 <script>
@@ -36,23 +41,42 @@
     let mouseDown = false;
     const queryParams = getQueryParams();
     const userListElement = document.getElementById("user-list");
+    let erasing = false;
+    const eraserBtn = document.getElementById("eraser-btn");
+    const eraserSlider = document.getElementById("eraser-slider");
+    const eraserSizeDisplay = document.getElementById("eraser-size");
+    const eraserSliderContainer = document.getElementById("eraser-slider-container");
     let currentPath = null;
 
+    eraserBtn.addEventListener("click", () => {
+        erasing = !erasing;
+        eraserBtn.style.backgroundColor = erasing ? "#ccc" : "";
+        eraserSliderContainer.style.display = erasing ? "block" : "none";
+    });
+    eraserSlider.addEventListener("input", (e) => {
+        eraserSizeDisplay.textContent = e.target.value;
+    });
 
     canvas.onmousemove = (e) => {
         x = e.clientX;
         y = e.clientY;
         const adjustedCoords = adjustMouseCoordinates(e);
         if (mouseDown) {
-            socket.emit("draw", { ...adjustedCoords, color: currentColor });
-            ctx.beginPath();
-            ctx.strokeStyle = currentColor;
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(adjustedCoords.x, adjustedCoords.y);
-            ctx.stroke();
-            ctx.closePath();
-            lastX = adjustedCoords.x;
-            lastY = adjustedCoords.y;
+            if (erasing) {
+                const size = eraserSlider.value;
+                ctx.clearRect(adjustedCoords.x - size / 2, adjustedCoords.y - size / 2, size, size);
+                socket.emit("erase", { ...adjustedCoords, size });
+            } else {
+                socket.emit("draw", { ...adjustedCoords, color: currentColor });
+                ctx.beginPath();
+                ctx.strokeStyle = currentColor;
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(adjustedCoords.x, adjustedCoords.y);
+                ctx.stroke();
+                ctx.closePath();
+                lastX = adjustedCoords.x;
+                lastY = adjustedCoords.y;
+            }
         }
     };
 
@@ -87,6 +111,10 @@
         ctx.closePath();
         lastX = x;
         lastY = y;
+    });
+
+    socket.on("onerase", ({ x, y, size }) => {
+        ctx.clearRect(x - size / 2, y - size / 2, size, size);
     });
 
     socket.on("segmentStart", () => {
