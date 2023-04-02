@@ -48,10 +48,13 @@ body {
 }
 
 #timer-controls {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
     position: fixed;
     bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
+    right: 0;
     z-index: 2;
     background-color: rgba(255, 255, 255, 0.9);
     padding: 10px;
@@ -61,6 +64,11 @@ body {
     font-family: Arial, sans-serif;
     font-size: 14px;
     color: #333;
+}
+
+.startBtn, .changeBtn, .eraseBtn {
+    display: block;
+    margin-bottom: 10px;
 }
 
 .startBtn {
@@ -99,8 +107,10 @@ body {
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
     font-size: 1rem;
+    margin-bottom: 0;
 }
 
 .eraseBtn:hover {
     background-color: #0056b3;
 }
+

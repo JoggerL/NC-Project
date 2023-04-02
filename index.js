@@ -41,10 +41,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on('draw', (data) => {
-        drawingData.push({ type: 'draw', x: data.x, y: data.y, color: data.color, pathId: socket.id });
+        drawingData.push({ type: 'draw', x: data.x, y: data.y, color: data.color, lineWidth: data.lineWidth, pathId: socket.id });
         connections.forEach(con => {
             if (con.id !== socket.id) {
-                con.emit('ondraw', { x: data.x, y: data.y, color: data.color, pathId: socket.id })
+                con.emit('ondraw', { x: data.x, y: data.y, color: data.color, lineWidth: data.lineWidth, pathId: socket.id })
             }
         })
     });
@@ -55,12 +55,10 @@ io.on("connection", (socket) => {
     });
 
     socket.on('down', (data) => {
-        // drawingData.push({ type: 'down', x: data.x, y: data.y, color: data.color, pathId: socket.id });
-        drawingData.push({ x: data.x, y: data.y, color: data.color});
+        drawingData.push({ type: 'down', x: data.x, y: data.y, color: data.color, lineWidth: data.lineWidth });
         connections.forEach(con => {
             if (con.id !== socket.id) {
-                con.emit('ondown', { x: data.x, y: data.y, color: data.color})
-                // con.emit('ondown', { x: data.x, y: data.y, color: data.color})
+                con.emit('ondown', { x: data.x, y: data.y, color: data.color, lineWidth: data.lineWidth })
             }
         })
     });

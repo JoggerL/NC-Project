@@ -22,6 +22,11 @@
         <input id="eraser-slider" type="range" min="1" max="50" value="10">
         <span id="eraser-size">10</span>
     </div>
+    <button class="brushBtn" id="brush-btn">Brush</button>
+    <div id="brush-slider-container" style="display: none;">
+        <input id="brush-slider" type="range" min="1" max="50" value="2">
+        <span id="brush-size">2</span>
+    </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 <script>
@@ -34,6 +39,8 @@
     let socket = io.connect('http://localhost:8080/')
     let lastPathId;
     let ctx = canvas.getContext("2d");
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
     //cursor shiftt!!!!!!!
     const canvasOffset = canvas.getBoundingClientRect();
     let x;
@@ -47,6 +54,23 @@
     const eraserSizeDisplay = document.getElementById("eraser-size");
     const eraserSliderContainer = document.getElementById("eraser-slider-container");
     let currentPath = null;
+    let lineWidth = 2;
+    const brushBtn = document.getElementById("brush-btn");
+    const brushSlider = document.getElementById("brush-slider");
+    const brushSizeDisplay = document.getElementById("brush-size");
+    const brushSliderContainer = document.getElementById("brush-slider-container");
+
+    // Add these lines after the eraserSlider event listener
+    brushBtn.addEventListener("click", () => {
+        erasing = false;
+        eraserBtn.style.backgroundColor = "";
+        eraserSliderContainer.style.display = "none";
+        brushSliderContainer.style.display = "block";
+    });
+    brushSlider.addEventListener("input", (e) => {
+        lineWidth = e.target.value;
+        brushSizeDisplay.textContent = lineWidth;
+    });
 
     eraserBtn.addEventListener("click", () => {
         erasing = !erasing;
@@ -67,9 +91,10 @@
                 ctx.clearRect(adjustedCoords.x - size / 2, adjustedCoords.y - size / 2, size, size);
                 socket.emit("erase", { ...adjustedCoords, size });
             } else {
-                socket.emit("draw", { ...adjustedCoords, color: currentColor });
+                socket.emit("draw", { ...adjustedCoords, color: currentColor, lineWidth });
                 ctx.beginPath();
                 ctx.strokeStyle = currentColor;
+                ctx.lineWidth = lineWidth;
                 ctx.moveTo(lastX, lastY);
                 ctx.lineTo(adjustedCoords.x, adjustedCoords.y);
                 ctx.stroke();
@@ -86,7 +111,7 @@
         lastX = adjustedCoords.x;
         lastY = adjustedCoords.y;
         ctx.moveTo(adjustedCoords.x, adjustedCoords.y);
-        socket.emit('down', { ...adjustedCoords, color: currentColor });
+        socket.emit('down', { ...adjustedCoords, color: currentColor, lineWidth });
         mouseDown = true;
     };
 
@@ -103,9 +128,10 @@
 
     const { username, password, userType } = queryParams;
 
-    socket.on('ondraw', ({ x, y, color }) => {
+    socket.on('ondraw', ({ x, y, color, lineWidth }) => {
         ctx.beginPath();
         ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
         ctx.moveTo(lastX, lastY);
         ctx.lineTo(x, y);
         ctx.stroke();
@@ -123,8 +149,9 @@
         ctx.beginPath();
     });
 
-    socket.on('ondown', ({ x, y, color }) => {
+    socket.on('ondown', ({ x, y, color, lineWidth }) => {
         ctx.strokeStyle = color;
+        ctx.lineWidth = lineWidth;
         ctx.moveTo(x, y);
         lastX = x;
         lastY = y;
@@ -134,6 +161,7 @@
         ctx.beginPath();
         drawingData.forEach((data) => {
             ctx.strokeStyle = data.color;
+            ctx.lineWidth = data.lineWidth || 2;
             if (data.type === "draw") {
                 ctx.lineTo(data.x, data.y);
                 ctx.stroke();
