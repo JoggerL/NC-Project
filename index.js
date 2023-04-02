@@ -33,7 +33,18 @@ io.on("connection", (socket) => {
     users.push(user); // Push the user object instead of socket
     socket.emit("userList", users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime }))); // Emit the updated userList to all connected clients
     //added
-    socket.emit('initialize', drawingData);
+    // socket.emit('initialize', drawingData);
+    socket.on("initialize", () => {
+        let drawingDataSegments = [];
+        drawingData.forEach((data) => {
+            if (data.type === "segmentStart") {
+                drawingDataSegments.push([]);
+            } else if (data.type === "draw" || data.type === "down") {
+                drawingDataSegments[drawingDataSegments.length - 1].push(data);
+            }
+        });
+        socket.emit("initialize", drawingDataSegments);
+    });
     socket.on('draw', (data) => {
         drawingData.push({ type: 'draw', x: data.x, y: data.y, color: data.color, pathId: socket.id });
         connections.forEach(con => {
@@ -41,6 +52,10 @@ io.on("connection", (socket) => {
                 con.emit('ondraw', { x: data.x, y: data.y, color: data.color, pathId: socket.id })
             }
         })
+    });
+    socket.on("segmentStart", () => {
+        drawingData.push({ type: "segmentStart" });
+        socket.broadcast.emit("segmentStart");
     });
 
     socket.on('down', (data) => {
