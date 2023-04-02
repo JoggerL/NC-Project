@@ -98,6 +98,7 @@
         const queryParams = getQueryParams();
         const { username, password, userType } = queryParams;
         socket.emit("user_joined", { username, password, userType });
+        socket.emit("requestDrawingData");
     });
 
     const { username, password, userType } = queryParams;
@@ -129,21 +130,21 @@
         lastY = y;
     });
 
-    socket.on("initialize", (drawingDataSegments) => {
-        drawingDataSegments.forEach((segment) => {
-            ctx.beginPath();
-            segment.forEach((data, index) => {
-                ctx.strokeStyle = data.color;
-                if (data.type === "draw") {
-                    ctx.lineTo(data.x, data.y);
-                    ctx.stroke();
-                } else if (data.type === "down") {
-                    ctx.moveTo(data.x, data.y);
-                }
-            });
+    socket.on("initialize", (drawingData) => {
+        ctx.beginPath();
+        drawingData.forEach((data) => {
+            ctx.strokeStyle = data.color;
+            if (data.type === "draw") {
+                ctx.lineTo(data.x, data.y);
+                ctx.stroke();
+            } else if (data.type === "down") {
+                ctx.moveTo(data.x, data.y);
+            } else if (data.type === "segmentStart") {
+                ctx.closePath();
+                ctx.beginPath();
+            }
         });
     });
-
     //added for listing users joined
     socket.on("userList", (userList) => {
         const userListElement = document.querySelector("#user-list ul");

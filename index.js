@@ -36,16 +36,8 @@ io.on("connection", (socket) => {
     //added
     // socket.emit('initialize', drawingData);
 
-    socket.on("initialize", () => {
-        let drawingDataSegments = [];
-        drawingData.forEach((data) => {
-            if (data.type === "segmentStart") {
-                drawingDataSegments.push([]);
-            } else if (data.type === "draw" || data.type === "down") {
-                drawingDataSegments[drawingDataSegments.length - 1].push(data);
-            }
-        });
-        socket.emit("initialize", drawingDataSegments);
+    socket.on("requestDrawingData", () => {
+        socket.emit("initialize", drawingData);
     });
 
     socket.on('draw', (data) => {
@@ -90,6 +82,7 @@ io.on("connection", (socket) => {
         // Emit the current list of users to all connected clients
         // io.emit('userList', userConn.map((user) => user.id)); // Emit the updated userList to all connected clients
         io.emit('userList', users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime }))); // Emit the updated userList to all connected clients
+        socket.emit("initialize", drawingData);
     });
 
     socket.on("start_timer", (time) => {
