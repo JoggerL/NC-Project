@@ -16,8 +16,8 @@
     <input id="timer-input" type="number" min="1" placeholder="Enter time in seconds">
     <button class = "startBtn" onclick="startTimer(document.getElementById('timer-input').value)">Start Timer</button>
     <input id="color-input" type="color" value="#000000">
-    <button onclick="changeColor(document.getElementById('color-input').value)">Change Color</button>
-    <button id="eraser-btn">Eraser</button>
+    <button class = "changeBtn" onclick="changeColor(document.getElementById('color-input').value)">Change Color</button>
+    <button class = "eraseBtn" id="eraser-btn">Eraser</button>
     <div id="eraser-slider-container" style="display: none;">
         <input id="eraser-slider" type="range" min="1" max="50" value="10">
         <span id="eraser-size">10</span>

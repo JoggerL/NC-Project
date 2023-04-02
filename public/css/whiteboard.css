@@ -76,3 +76,31 @@ body {
 .startBtn:hover {
     background-color: #0056b3;
 }
+
+.changeBtn {
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+}
+
+.changeBtn:hover {
+    background-color: #0056b3;
+}
+
+.eraseBtn {
+    cursor: pointer;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    font-size: 1rem;
+}
+
+.eraseBtn:hover {
+    background-color: #0056b3;
+}
