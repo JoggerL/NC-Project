@@ -47,20 +47,20 @@
             socket.emit("draw", { ...adjustedCoords, color: currentColor });
             ctx.beginPath();
             ctx.strokeStyle = currentColor;
-            ctx.moveTo(lastX, lastY); // Add this line
+            ctx.moveTo(lastX, lastY);
             ctx.lineTo(adjustedCoords.x, adjustedCoords.y);
             ctx.stroke();
             ctx.closePath();
-            lastX = adjustedCoords.x; // Add this line
-            lastY = adjustedCoords.y; // Add this line
+            lastX = adjustedCoords.x;
+            lastY = adjustedCoords.y;
         }
     };
 
     canvas.onmousedown = (e) => {
         const adjustedCoords = adjustMouseCoordinates(e);
 
-        lastX = adjustedCoords.x; // Add this line
-        lastY = adjustedCoords.y; // Add this line
+        lastX = adjustedCoords.x;
+        lastY = adjustedCoords.y;
         ctx.moveTo(adjustedCoords.x, adjustedCoords.y);
         socket.emit('down', { ...adjustedCoords, color: currentColor });
         mouseDown = true;
@@ -79,14 +79,14 @@
     const { username, password, userType } = queryParams;
 
     socket.on('ondraw', ({ x, y, color }) => {
-        // ctx.beginPath();
+        ctx.beginPath();
         ctx.strokeStyle = color;
-        // ctx.moveTo(lastX, lastY);
+        ctx.moveTo(lastX, lastY);
         ctx.lineTo(x, y);
         ctx.stroke();
-        // ctx.closePath();
-        // lastX = x;
-        // lastY = y;
+        ctx.closePath();
+        lastX = x;
+        lastY = y;
     });
 
     socket.on("segmentStart", () => {
@@ -94,28 +94,27 @@
         ctx.beginPath();
     });
 
-    socket.on('ondown', ({ x, y, color }) =>    {
+    socket.on('ondown', ({ x, y, color }) => {
         ctx.strokeStyle = color;
-
-        //Sunday, try to fix!!!!!!!!!!!!!!!!!!!!!!!!!
         ctx.moveTo(x, y);
+        lastX = x;
+        lastY = y;
     });
 
-    // socket.on("initialize", (drawingDataSegments) => {
-    //     drawingDataSegments.forEach((segment) => {
-    //         ctx.beginPath();
-    //         segment.forEach((data, index) => {
-    //             ctx.strokeStyle = data.color;
-    //             if (data.type === "draw") {
-    //                 ctx.lineTo(data.x, data.y);
-    //                 ctx.stroke();
-    //             } else if (data.type === "down") {
-    //                 ctx.moveTo(data.x, data.y);
-    //             }
-    //         });
-    //         ctx.closePath();
-    //     });
-    // });
+    socket.on("initialize", (drawingDataSegments) => {
+        drawingDataSegments.forEach((segment) => {
+            ctx.beginPath();
+            segment.forEach((data, index) => {
+                ctx.strokeStyle = data.color;
+                if (data.type === "draw") {
+                    ctx.lineTo(data.x, data.y);
+                    ctx.stroke();
+                } else if (data.type === "down") {
+                    ctx.moveTo(data.x, data.y);
+                }
+            });
+        });
+    });
 
     //added for listing users joined
     socket.on("userList", (userList) => {

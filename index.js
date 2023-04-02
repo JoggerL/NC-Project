@@ -31,9 +31,11 @@ io.on("connection", (socket) => {
     };
 
     users.push(user); // Push the user object instead of socket
+
     socket.emit("userList", users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime }))); // Emit the updated userList to all connected clients
     //added
     // socket.emit('initialize', drawingData);
+
     socket.on("initialize", () => {
         let drawingDataSegments = [];
         drawingData.forEach((data) => {
@@ -100,15 +102,12 @@ io.on("connection", (socket) => {
 
 });
 
+
 httpServer.listen(8080);
-
 const PORT = process.env.PORT || 3000;
-
 const app = express()
-
 app.use(cors());
 app.use(express.json());
-
 if (process.env.NODE_ENV !== 'production') {
     dotenv.config({path: './config/config.env'});
     app.use(function(req, res, next) {
@@ -119,9 +118,7 @@ if (process.env.NODE_ENV !== 'production') {
         next();
     });
 }
-
 app.use(express.json());
-
 app.use(session({
     secret: 'our hardcoded secret',
     cookie: {
