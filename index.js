@@ -22,6 +22,7 @@ let users = [];
 
 io.on("connection", (socket) => {
     connections.push(socket);
+
     console.log(`${socket.id} has connected`);
 
     const user = {
@@ -147,8 +148,8 @@ app.get("/", (req, res) => {
     }
 );
 
-app.get("/course", (req, res) => {
-        res.render('course');
+app.get("/board", (req, res) => {
+        res.render('board');
     }
 );
 

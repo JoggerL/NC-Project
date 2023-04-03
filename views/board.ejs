@@ -31,30 +31,30 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.js"></script>
 <script>
     let canvas = document.getElementById('canvas')
-    canvas.width = 1600;
-    canvas.height = 900;
     let currentColor = "#000000";
+    // prevent cursor shift
     let lastX, lastY;
+    let x;
+    let y;
     let drawingStarted;
     let socket = io.connect('http://localhost:8080/')
     let lastPathId;
     let ctx = canvas.getContext("2d");
+    let mouseDown = false;
+    let erasing = false;
+    let currentPath = null;
+    let lineWidth = 2;
+    canvas.width = 1600;
+    canvas.height = 900;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
-    //cursor shiftt!!!!!!!
     const canvasOffset = canvas.getBoundingClientRect();
-    let x;
-    let y;
-    let mouseDown = false;
     const queryParams = getQueryParams();
     const userListElement = document.getElementById("user-list");
-    let erasing = false;
     const eraserBtn = document.getElementById("eraser-btn");
     const eraserSlider = document.getElementById("eraser-slider");
     const eraserSizeDisplay = document.getElementById("eraser-size");
     const eraserSliderContainer = document.getElementById("eraser-slider-container");
-    let currentPath = null;
-    let lineWidth = 2;
     const brushBtn = document.getElementById("brush-btn");
     const brushSlider = document.getElementById("brush-slider");
     const brushSizeDisplay = document.getElementById("brush-size");
@@ -162,7 +162,7 @@
         drawingData.forEach((data) => {
             ctx.strokeStyle = data.color;
             ctx.lineWidth = data.lineWidth || 2;
-            if (data.type === "draw") {
+            if (data.type === "draw")   {
                 ctx.lineTo(data.x, data.y);
                 ctx.stroke();
             } else if (data.type === "down") {
@@ -192,15 +192,18 @@
             socket.emit("start_timer", time);
         }, 1000);
     }
+
     function changeColor(newColor) {
         currentColor = newColor;
     }
+
     function adjustMouseCoordinates(e) {
         return {
             x: e.clientX - canvasOffset.left,
             y: e.clientY - canvasOffset.top,
         };
     }
+
     function getQueryParams() {
         const queryString = window.location.search.substring(1);
         const params = queryString.split("&");

@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">
+<!--    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">-->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css"/>
+
     <title>Interactive Whiteboard</title>
 
 </head>
@@ -21,7 +23,7 @@
         <h1>Welcome to the Interactive Whiteboard!</h1>
         <p>
             This application offers an intuitive and user-friendly platform for
-            users to collaborate and create digital whiteboards in real-time.
+            users to collaborate and work on digital whiteboards in real-time.
             Share your ideas, brainstorm, sketch, and communicate with your team
             seamlessly. Sign in to start using the Interactive Whiteboard now!
         </p>
@@ -60,24 +62,6 @@
     const logoutBtn = document.getElementById("logoutBtn");
     let listUser = null;
 
-    drawingBtn.addEventListener("click", () => {
-        // window.location.href = '/course';
-        if (listUser) {
-            const { username, password, userType } = listUser;
-            window.location.href = `/course?username=${username}&password=${password}&userType=${userType}`;
-        } else {
-            alert('Please log in first.');
-        }
-    });
-
-    loginBtn.addEventListener("click", () => {
-        loginNav.classList.toggle("visible");
-    });
-
-    closeBtn.addEventListener("click", () => {
-        loginNav.classList.remove("visible");
-    });
-
     // try on session check
     function checkSession() {
         fetch("/auth/check-session", {
@@ -109,6 +93,24 @@
     // Call the checkSession function when the page loads
     checkSession();
 
+    drawingBtn.addEventListener("click", () => {
+        // window.location.href = '/board';
+        if (listUser) {
+            const { username, password, userType } = listUser;
+            window.location.href = `/board?username=${username}&password=${password}&userType=${userType}`;
+        } else {
+            alert('Please log in first.');
+        }
+    });
+
+    loginBtn.addEventListener("click", () => {
+        loginNav.classList.toggle("visible");
+    });
+
+    closeBtn.addEventListener("click", () => {
+        loginNav.classList.remove("visible");
+    });
+
     loginForm.addEventListener("submit", (event) => {
         event.preventDefault();
         const username = document.getElementById("username").value;
@@ -131,7 +133,7 @@
                         password: password,
                         userType: userType,
                     };
-                    // window.location.href = '/course';
+                    // window.location.href = '/board';
                 } else {
                     throw new Error("Login failed");
                 }
@@ -140,7 +142,6 @@
                 alert(error.message);
             });
     });
-
 
     logoutBtn.addEventListener("click", () => {
         fetch("/auth/logout", {
