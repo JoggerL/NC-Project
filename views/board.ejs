@@ -168,7 +168,7 @@
                 ctx.lineTo(data.x, data.y);
                 ctx.stroke();
             } else if (data.type === "down") {
-                ctx.beginPath(); // Add this line
+                ctx.beginPath();
                 ctx.moveTo(data.x, data.y);
             } else if (data.type === "segmentStart") {
                 ctx.closePath();
