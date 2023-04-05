@@ -132,7 +132,9 @@
 
     const {username, password, userType} = queryParams;
 
+
     backBtn.addEventListener("click", () => {
+        socket.emit("user_left");
         window.location.href = `/?username=${username}&password=${password}&userType=${userType}`;
     });
 
@@ -187,7 +189,7 @@
     socket.on("userList", (userList) => {
         const userListElement = document.querySelector("#user-list ul");
         userListElement.innerHTML = userList
-            .map((user) => `<li class="${user.remainingTime <= 0 ? 'time-up' : ''}">${user.username} - ${user.remainingTime}s</li>`)
+            .map((user) => `<li class="${user.remainingTime <= 0 ? 'time-up' : ''}" style="border:1px groove black;">${user.username} - ${user.remainingTime}s</li>`)
             .join("");
     });
 

@@ -100,6 +100,11 @@ io.on("connection", (socket) => {
         });
     });
 
+    socket.on("user_left", () => {
+        users = users.filter((user) => user.id !== socket.id);
+        io.emit("userList", users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime })));
+    });
+
 });
 
 
