@@ -80,7 +80,7 @@ canvas {
     margin-right: 1rem;
 }
 
-.startBtn, .changeBtn, .eraseBtn {
+.startBtn, .changeBtn, .eraseBtn, .brushBtn, .backBtn{
     cursor: pointer;
     background-color: #007bff;
     color: #fff;
@@ -91,6 +91,6 @@ canvas {
     margin-left: 0.5rem;
 }
 
-.startBtn:hover, .changeBtn:hover, .eraseBtn:hover {
+.startBtn:hover, .changeBtn:hover, .eraseBtn:hover, .brushBtn:hover, .backBtn:hover {
     background-color: #0056b3;
 }

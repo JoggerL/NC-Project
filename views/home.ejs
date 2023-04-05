@@ -90,10 +90,29 @@
         logoutBtn.style.display = "inline";
     }
 
+    function getUserFromLocalStorage() {
+        const userData = localStorage.getItem("loggedInUser");
+        if (userData) {
+            return JSON.parse(userData);
+        }
+        return null;
+    }
+
+    function init() {
+        checkSession();
+        listUser = getUserFromLocalStorage();
+        if (listUser) {
+            updateUIAfterLogin();
+        }
+    }
+
+    init();
+
     // Call the checkSession function when the page loads
     checkSession();
 
     drawingBtn.addEventListener("click", () => {
+        listUser = getUserFromLocalStorage();
         // window.location.href = '/board';
         if (listUser) {
             const { username, password, userType } = listUser;
@@ -133,6 +152,7 @@
                         password: password,
                         userType: userType,
                     };
+                    localStorage.setItem("loggedInUser", JSON.stringify(listUser));
                     // window.location.href = '/board';
                 } else {
                     throw new Error("Login failed");
@@ -152,6 +172,7 @@
                 if (response.ok) {
                     loginBtn.style.display = "inline";
                     logoutBtn.style.display = "none";
+                    localStorage.removeItem("loggedInUser");
                 } else {
                     throw new Error("Logout failed");
                 }
