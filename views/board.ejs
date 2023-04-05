@@ -8,16 +8,16 @@
     <link rel="stylesheet" href="/css/whiteboard.css"/>
 </head>
 <body>
-<canvas id="canvas" class="whiteboard"></canvas>
+<canvas id="canvas" class="whiteboard" style="width: 80%; height: 88%;"></canvas>
 <div id="user-list">
     <ul></ul>
 </div>
 <div id="timer-controls">
     <input id="timer-input" type="number" min="1" placeholder="Enter time in seconds">
-    <button class = "startBtn" onclick="startTimer(document.getElementById('timer-input').value)">Start Timer</button>
+    <button class="startBtn" onclick="startTimer(document.getElementById('timer-input').value)">Start Timer</button>
     <input id="color-input" type="color" value="#000000">
-    <button class = "changeBtn" onclick="changeColor(document.getElementById('color-input').value)">Change Color</button>
-    <button class = "eraseBtn" id="eraser-btn">Eraser</button>
+    <button class="changeBtn" onclick="changeColor(document.getElementById('color-input').value)">Change Color</button>
+    <button class="eraseBtn" id="eraser-btn">Eraser</button>
     <div id="eraser-slider-container" style="display: none;">
         <input id="eraser-slider" type="range" min="1" max="50" value="10">
         <span id="eraser-size">10</span>
@@ -44,8 +44,10 @@
     let erasing = false;
     let currentPath = null;
     let lineWidth = 2;
-    canvas.width = 1600;
-    canvas.height = 900;
+    // canvas.width = 1600;
+    // canvas.height = 900;
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
     const canvasOffset = canvas.getBoundingClientRect();
@@ -89,9 +91,9 @@
             if (erasing) {
                 const size = eraserSlider.value;
                 ctx.clearRect(adjustedCoords.x - size / 2, adjustedCoords.y - size / 2, size, size);
-                socket.emit("erase", { ...adjustedCoords, size });
+                socket.emit("erase", {...adjustedCoords, size});
             } else {
-                socket.emit("draw", { ...adjustedCoords, color: currentColor, lineWidth });
+                socket.emit("draw", {...adjustedCoords, color: currentColor, lineWidth});
                 ctx.beginPath();
                 ctx.strokeStyle = currentColor;
                 ctx.lineWidth = lineWidth;
@@ -111,7 +113,7 @@
         lastX = adjustedCoords.x;
         lastY = adjustedCoords.y;
         ctx.moveTo(adjustedCoords.x, adjustedCoords.y);
-        socket.emit('down', { ...adjustedCoords, color: currentColor, lineWidth });
+        socket.emit('down', {...adjustedCoords, color: currentColor, lineWidth});
         mouseDown = true;
     };
 
@@ -121,14 +123,14 @@
 
     socket.on("connect", () => {
         const queryParams = getQueryParams();
-        const { username, password, userType } = queryParams;
-        socket.emit("user_joined", { username, password, userType });
+        const {username, password, userType} = queryParams;
+        socket.emit("user_joined", {username, password, userType});
         socket.emit("requestDrawingData");
     });
 
-    const { username, password, userType } = queryParams;
+    const {username, password, userType} = queryParams;
 
-    socket.on('ondraw', ({ x, y, color, lineWidth }) => {
+    socket.on('ondraw', ({x, y, color, lineWidth}) => {
         ctx.beginPath();
         ctx.strokeStyle = color;
         ctx.lineWidth = lineWidth;
@@ -140,7 +142,7 @@
         lastY = y;
     });
 
-    socket.on("onerase", ({ x, y, size }) => {
+    socket.on("onerase", ({x, y, size}) => {
         ctx.clearRect(x - size / 2, y - size / 2, size, size);
     });
 
@@ -149,7 +151,7 @@
         ctx.beginPath();
     });
 
-    socket.on('ondown', ({ x, y, color, lineWidth }) => {
+    socket.on('ondown', ({x, y, color, lineWidth}) => {
         ctx.strokeStyle = color;
         ctx.lineWidth = lineWidth;
         ctx.moveTo(x, y);
@@ -162,7 +164,7 @@
         drawingData.forEach((data) => {
             ctx.strokeStyle = data.color;
             ctx.lineWidth = data.lineWidth || 2;
-            if (data.type === "draw")   {
+            if (data.type === "draw") {
                 ctx.lineTo(data.x, data.y);
                 ctx.stroke();
             } else if (data.type === "down") {
