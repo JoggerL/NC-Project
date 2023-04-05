@@ -31,11 +31,9 @@ io.on("connection", (socket) => {
         remainingTime: 0, // Add a field to store the remaining time
     };
 
-    users.push(user); // Push the user object instead of socket
+    users.push(user);
 
-    socket.emit("userList", users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime }))); // Emit the updated userList to all connected clients
-    //added
-    // socket.emit('initialize', drawingData);
+    socket.emit("userList", users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime })));
 
     socket.on("requestDrawingData", () => {
         socket.emit("initialize", drawingData);
@@ -71,7 +69,8 @@ io.on("connection", (socket) => {
 
     socket.on('user_joined', (userData) => {
         userConn.push(userData);
-        socket.userData = userData; // Store the user data in the socket for easy access
+        // Store the user data in the socket for easy access
+        socket.userData = userData;
         const userIndex = users.findIndex((u) => u.id === socket.id);
         if (userIndex !== -1) {
             users[userIndex].username = userData.username;
@@ -80,7 +79,7 @@ io.on("connection", (socket) => {
         }
         // Emit the current list of users to all connected clients
         // io.emit('userList', userConn.map((user) => user.id)); // Emit the updated userList to all connected clients
-        io.emit('userList', users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime }))); // Emit the updated userList to all connected clients
+        io.emit('userList', users.map((user) => ({ id: user.id, username: user.username, remainingTime: user.remainingTime })));
         socket.emit("initialize", drawingData);
     });
 

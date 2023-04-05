@@ -80,7 +80,7 @@ canvas {
     margin-right: 1rem;
 }
 
-.startBtn, .changeBtn, .eraseBtn, .brushBtn, .backBtn{
+.startBtn, .changeBtn, .eraseBtn, .brushBtn, .backBtn, .gradeBtn{
     cursor: pointer;
     background-color: #007bff;
     color: #fff;
@@ -91,6 +91,27 @@ canvas {
     margin-left: 0.5rem;
 }
 
-.startBtn:hover, .changeBtn:hover, .eraseBtn:hover, .brushBtn:hover, .backBtn:hover {
+.startBtn:hover, .changeBtn:hover, .eraseBtn:hover, .brushBtn:hover, .backBtn:hover, .gradeBtn:hover{
     background-color: #0056b3;
+}
+
+.grade-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    max-width: 400px;
+}
+
+.form-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: none;
+    width: 100%;
+    max-width: 400px;
+    z-index: 10; /*  Shows above other elements */
+    background-color: rgba(255, 255, 255, 0.9);
 }
