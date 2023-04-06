@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<!--    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">-->
+    <!--    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&display=swap" rel="stylesheet">-->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/css/styles.css"/>
 
@@ -11,24 +11,49 @@
 
 </head>
 <body>
-<header>
-<!--    <button class="login-btn" id="loginBtn">Login</button>-->
-        <button class="login-btn" id="loginBtn">Login</button>
-        <button class="logout-btn" id="logoutBtn" style="display: none;">Logout</button>
-        <button class="drawing-btn" id="drawingBtn">Drawing</button>
-        <button class="about-btn" id="aboutBtn">About</button>
-</header>
-<main>
-    <section class="intro">
-        <h1>Welcome to the Interactive Whiteboard!</h1>
-        <p>
-            This application offers an intuitive and user-friendly platform for
-            users to collaborate and work on digital whiteboards in real-time.
-            Share your ideas, brainstorm, sketch, and communicate with your team
-            seamlessly. Sign in to start using the Interactive Whiteboard now!
-        </p>
-    </section>
-</main>
+<div class="navbar">
+    <a href="#Intro" class="logo">NC-PROJECT</a>
+    <!--    <button class="login-btn" id="loginBtn">Login</button>-->
+    <ul class="nav">
+        <li><a href="#Home" class="home-btn" id="homeBtn">Intro</a></li>
+        <li><button class="login-btn" id="loginBtn">Login</button></li>
+        <li><button class="logout-btn" id="logoutBtn" style="display: none;">Logout</button></li>
+        <li><button class="drawing-btn" id="drawingBtn">Drawing</button></li>
+        <li><a href="#about" class="about-btn" id="aboutBtn">About</a></li>
+    </ul>
+</div>
+<div class="banner-area" id="Intro"></div>
+<div class="home-area" id="Home">
+    <div class="text-part">
+    <h1>Introduction</h1>
+    <p>
+        This application offers an intuitive and user-friendly platform for
+        users to collaborate and work on digital whiteboards in real-time.
+        Share your ideas, brainstorm, sketch, and communicate with your team
+        seamlessly. Sign in to start using the Interactive Whiteboard now!
+    </p>
+    </div>
+</div>
+<div class="about-area" id="about">
+    <div class="text-part">
+    <h1>About</h1>
+    <p>
+        This application is completed by "name" and "name" as the project of course ENGR5710G: Network Computing.
+        Supported features are listed below
+    </p>
+    </div>
+</div>
+<!--<main>-->
+<!--    <section class="intro">-->
+<!--        <h1>Welcome to the Interactive Whiteboard!</h1>-->
+<!--        <p>-->
+<!--            This application offers an intuitive and user-friendly platform for-->
+<!--            users to collaborate and work on digital whiteboards in real-time.-->
+<!--            Share your ideas, brainstorm, sketch, and communicate with your team-->
+<!--            seamlessly. Sign in to start using the Interactive Whiteboard now!-->
+<!--        </p>-->
+<!--    </section>-->
+<!--</main>-->
 <nav class="login-nav" id="loginNav">
     <button class="close-btn" id="closeBtn">&times;</button>
     <form
@@ -115,7 +140,7 @@
         listUser = getUserFromLocalStorage();
         // window.location.href = '/board';
         if (listUser) {
-            const { username, password, userType } = listUser;
+            const {username, password, userType} = listUser;
             window.location.href = `/board?username=${username}&password=${password}&userType=${userType}`;
         } else {
             alert('Please log in first.');

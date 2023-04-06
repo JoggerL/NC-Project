@@ -8,7 +8,7 @@
 
 body {
     /*font-family: Arial, sans-serif;*/
-    font-family: 'Caveat', cursive;
+    font-family: 'Roboto Slab', serif;
     line-height: 1.6;
     font-size: large;
 }
@@ -18,19 +18,93 @@ header {
     display: flex;
     justify-content: flex-start;
 }
+.navbar{
+    position: fixed;
+    display: flex;
+    justify-content: right;
+    align-items:center ;
+    flex-direction: row;
+    flex-wrap: wrap;
+    background-color: #393939;
+    width: 100%;
+    height: 10%;
+    z-index: 1;
+}
 
-.login-btn {
+.nav{
+    display: flex;
+    justify-content: right ;
+    list-style: none;
+    margin-right: 10%;
+}
+
+.logo{
+    flex:1 1 auto;
+    margin-left: 10%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    font-size: 10%;
+
+}
+
+.banner-area{
+    position: relative;
+    background-color: #393939;
+    width: 100%;
+    height: 100vh;
+    background-repeat: no-repeat;
+    -webkit-background-size: cover;
+    background-size: cover;
+}
+
+.home-area{
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    width: 100%;
+    Height:100vh;
+}
+
+.about-area{
+    position: relative;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    flex-direction: row;
+    width: 100%;
+    Height:100vh;
+}
+.home-area .text-part {
+    width: 50%;
+    text-align: center;
+    margin: 0 auto;
+}
+
+.login-btn, .drawing-btn, .about-btn, .home-btn, .logout-btn {
     cursor: pointer;
-    background-color: #007bff;
+    background-color: #393939;
     color: #fff;
+    font-size: 1rem;
     border: none;
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
-    font-size: 1rem;
+    font-family: 'Roboto Slab', serif;
 }
 
-.login-btn:hover {
-    background-color: #0056b3;
+a{
+    text-decoration: none;
+    color: #fff;
+    font-size: 1rem;
+    font-family: 'Roboto Slab', serif;
+}
+
+.login-btn:hover, .drawing-btn:hover, .about-btn:hover, .home-btn:hover, .logout-btn:hover {
+    background-color: #ffffff;
 }
 
 .intro {
@@ -90,66 +164,66 @@ input[type="submit"]:hover {
     background-color: #0056b3;
 }
 
-.login-btn {
-    /*display: flex;*/
-    /*justify-content: space-between;*/
-    /*align-items: center;*/
-    background-color: rgba(0,136,169,1);
-    padding: 10px 25px;
-    border: none;
-    border-radius: 50px;
-    cursor:pointer;
-    transition: all 0.3s ease 0s;
-}
+/*.login-btn {*/
+/*    !*display: flex;*!*/
+/*    !*justify-content: space-between;*!*/
+/*    !*align-items: center;*!*/
+/*    background-color: rgba(0,136,169,1);*/
+/*    padding: 10px 25px;*/
+/*    border: none;*/
+/*    border-radius: 50px;*/
+/*    cursor:pointer;*/
+/*    transition: all 0.3s ease 0s;*/
+/*}*/
 
-.login-btn :hover {
-    background-color: rgba(0,136,169,0.8);
-}
+/*.login-btn :hover {*/
+/*    background-color: rgba(0,136,169,0.8);*/
+/*}*/
 
-.drawing-btn {
-    /*display: flex;*/
-    /*justify-content: space-between;*/
-    /*align-items: center;*/
-    background-color: rgba(0,136,169,1);
-    padding: 10px 25px;
-    border: none;
-    border-radius: 50px;
-    cursor:pointer;
-    transition: all 0.3s ease 0s;
-}
+/*.drawing-btn {*/
+/*    !*display: flex;*!*/
+/*    !*justify-content: space-between;*!*/
+/*    !*align-items: center;*!*/
+/*    background-color: rgba(0,136,169,1);*/
+/*    padding: 10px 25px;*/
+/*    border: none;*/
+/*    border-radius: 50px;*/
+/*    cursor:pointer;*/
+/*    transition: all 0.3s ease 0s;*/
+/*}*/
 
-.drawing-btn :hover {
-    background-color: rgba(0,136,169,0.8);
-}
+/*.drawing-btn :hover {*/
+/*    background-color: rgba(0,136,169,0.8);*/
+/*}*/
 
-.about-btn {
-    /*display: flex;*/
-    /*justify-content: space-between;*/
-    /*align-items: center;*/
-    background-color: rgba(0,136,169,1);
-    padding: 10px 25px;
-    border: none;
-    border-radius: 50px;
-    cursor:pointer;
-    transition: all 0.3s ease 0s;
-}
+/*.about-btn {*/
+/*    !*display: flex;*!*/
+/*    !*justify-content: space-between;*!*/
+/*    !*align-items: center;*!*/
+/*    background-color: rgba(0,136,169,1);*/
+/*    padding: 10px 25px;*/
+/*    border: none;*/
+/*    border-radius: 50px;*/
+/*    cursor:pointer;*/
+/*    transition: all 0.3s ease 0s;*/
+/*}*/
 
-.about-btn :hover {
-    background-color: rgba(0,136,169,0.8);
-}
+/*.about-btn :hover {*/
+/*    background-color: rgba(0,136,169,0.8);*/
+/*}*/
 
-.logout-btn {
-    /*display: flex;*/
-    /*justify-content: space-between;*/
-    /*align-items: center;*/
-    background-color: rgba(0,136,169,1);
-    padding: 10px 25px;
-    border: none;
-    border-radius: 50px;
-    cursor:pointer;
-    transition: all 0.3s ease 0s;
-}
+/*.logout-btn {*/
+/*    !*display: flex;*!*/
+/*    !*justify-content: space-between;*!*/
+/*    !*align-items: center;*!*/
+/*    background-color: rgba(0,136,169,1);*/
+/*    padding: 10px 25px;*/
+/*    border: none;*/
+/*    border-radius: 50px;*/
+/*    cursor:pointer;*/
+/*    transition: all 0.3s ease 0s;*/
+/*}*/
 
-.logout-btn :hover {
-    background-color: rgba(0,136,169,0.8);
-}
+/*.logout-btn :hover {*/
+/*    background-color: rgba(0,136,169,0.8);*/
+/*}*/
